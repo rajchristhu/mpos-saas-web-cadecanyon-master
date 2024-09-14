@@ -1,0 +1,10 @@
+{
+  "projects": {
+    "default": "dbillz24",
+    "dbillz": "test-e4f6c",
+    "release": "dbillz24"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}
