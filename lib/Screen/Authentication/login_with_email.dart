@@ -218,23 +218,23 @@ class _LogInEmailState extends State<LogInEmail> {
                                         ),
                                       ),
                                       const Spacer(),
-                                      // SizedBox(
-                                      //   width: 130,
-                                      //   child: ListTile(
-                                      //     onTap: (() => Navigator.pushNamed(context, SignUp.route)),
-                                      //     contentPadding: EdgeInsets.zero,
-                                      //     horizontalTitleGap: 0,
-                                      //     leading: const Icon(
-                                      //       Icons.how_to_reg,
-                                      //       color: kGreenTextColor,
-                                      //     ),
-                                      //     title: Text(
-                                      //       'Registration',
-                                      //       style: kTextStyle.copyWith(color: kGreenTextColor),
-                                      //       textAlign: TextAlign.end,
-                                      //     ),
-                                      //   ),
-                                      // ),
+                                      SizedBox(
+                                        width: 130,
+                                        child: ListTile(
+                                          onTap: (() => Navigator.pushNamed(context, SignUp.route)),
+                                          contentPadding: EdgeInsets.zero,
+                                          horizontalTitleGap: 0,
+                                          leading: const Icon(
+                                            Icons.how_to_reg,
+                                            color: kGreenTextColor,
+                                          ),
+                                          title: Text(
+                                            'Registration',
+                                            style: kTextStyle.copyWith(color: kGreenTextColor),
+                                            textAlign: TextAlign.end,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ).visible(widget.isEmailLogin),
                                 ],

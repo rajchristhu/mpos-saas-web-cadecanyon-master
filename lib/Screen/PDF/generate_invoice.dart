@@ -95,7 +95,7 @@ class _GenerateInvoiceState extends State<GenerateInvoice> {
                     mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
                     children: [
                       pw.Text(
-                        "39 TVR Road, ThiruthuraiPoondi",
+                        "39 TVR Road, ",
                         maxLines: 1,
                         style: pw.TextStyle(
                           fontSize: 10,

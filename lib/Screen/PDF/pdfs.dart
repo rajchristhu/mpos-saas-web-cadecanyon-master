@@ -106,7 +106,7 @@ class GeneratePdfAndPrint {
                         ),
                       ),
                       pw.Text(
-                        "Address: Main Road Nadukadai, Thiruthuraipoondi",
+                        "Address: Main Road Nadukadai",
                         maxLines: 1,
                         style: pw.TextStyle(
                           fontSize: 10,
@@ -313,6 +313,7 @@ class GeneratePdfAndPrint {
                                       color: PdfColor.fromHex("#000000"),
                                       fontWeight: pw.FontWeight.normal,
                                     ),
+
                                   ),
                                       pw.SizedBox(width: 25,),
                                   pw.Text(

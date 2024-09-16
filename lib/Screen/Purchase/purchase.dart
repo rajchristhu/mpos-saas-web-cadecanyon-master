@@ -23,6 +23,7 @@ import '../../Provider/product_provider.dart';
 import '../../Provider/profile_provider.dart';
 import '../../constant.dart';
 import '../../currency.dart';
+import '../../model/add_to_cart_model.dart';
 import '../../model/category_model.dart';
 import '../../model/customer_model.dart';
 import '../../model/transition_model.dart';
@@ -1163,7 +1164,93 @@ class _PurchaseState extends State<Purchase> {
                             ],
                           ),
                           const SizedBox(height: 20.0),
+                          Text("Search by name "),
+                          productList.when(data: (product) {
+                            allProductsNameList.clear();
+                            for (var element in product) {
+                              allProductsNameList.add(element.productName.removeAllWhiteSpace().toLowerCase());
+                              allProductsCodeList.add(element.productCode.removeAllWhiteSpace().toLowerCase());
+                            }
+                            return SizedBox(
+                              height: 50.0,
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                  side: const BorderSide(color: kLitGreyColor),
+                                ),
+                                child:Autocomplete(
 
+                                  // optionsBuilder: (TextEditingValue textEditingValue) {
+                                  //   if (textEditingValue.text == '') {
+                                  //     return const Iterable<String>.empty();
+                                  //   }
+                                  //   return fruits.where((String option) {
+                                  //     return option
+                                  //         .toLowerCase()
+                                  //         .contains(textEditingValue.text.toLowerCase());
+                                  //   });
+                                  // },
+                                  optionsBuilder: (TextEditingValue textEditingValue) {
+                                    // _handleInput(textEditingValue.text);  // await if necessary
+                                    return allProductsNameList.where((String option) {
+                                      return option
+                                          .trim()
+                                          .toLowerCase()
+                                          .contains(textEditingValue.text.trim().toLowerCase());
+                                    });
+                                  },
+
+                                  onSelected: (String selection) {
+
+                                    if (selection  != '') {
+                                      if (product.isEmpty) {
+                                        EasyLoading.showError('No Product Found');
+                                      }
+                                      for (int i = 0; i < product.length; i++) {
+                                        if (product[i].productName.trim().toLowerCase() == selection.trim().toLowerCase() ) {
+                                          ProductModel cartProduct = product[i];
+                                          cartProduct.serialNumber = [];
+                                          cartProduct.productStock = '1';
+                                          setState(() {
+                                            if (!uniqueCheck(product[i].productCode)) {
+                                              cartList.add(cartProduct);
+                                              nameCodeCategoryController.clear();
+                                              nameFocus.requestFocus();
+                                              searchProductCode = '';
+                                            } else {
+                                              nameCodeCategoryController.clear();
+                                              nameFocus.requestFocus();
+                                              searchProductCode = '';
+                                            }
+                                          });
+                                          break;
+                                        }
+                                        if (i + 1 == product.length) {
+                                          nameCodeCategoryController.clear();
+                                          nameFocus.requestFocus();
+                                          EasyLoading.showError('Not found');
+                                          setState(() {
+                                            searchProductCode = '';
+                                          });
+                                        }
+                                      }
+                                    }
+                                    },
+                                ),
+                              ),
+
+                            );
+                          }, error: (e, stack) {
+                            return Center(
+                              child: Text(e.toString()),
+                            );
+                          }, loading: () {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
                           ///_________Purchase_bord_____________________________________
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,

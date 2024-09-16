@@ -471,7 +471,7 @@ class _TabShowPaymentPopUpState extends State<TabShowPaymentPopUp> {
     ref.child(key!).update({'due': '$totalDue'});
   }
 
-  void decreaseStock(String productCode, int quantity) async {
+  void decreaseStock(String productCode, num quantity) async {
     final ref = FirebaseDatabase.instance.ref('$constUserId/Products/');
 
     var data = await ref.orderByChild('productCode').equalTo(productCode).once();
@@ -479,7 +479,7 @@ class _TabShowPaymentPopUpState extends State<TabShowPaymentPopUp> {
 
     var data1 = await ref.child('$productPath/productStock').once();
     int stock = int.parse(data1.snapshot.value.toString());
-    int remainStock = stock - quantity;
+    num remainStock = stock - quantity;
 
     ref.child(productPath).update({'productStock': '$remainStock'});
   }

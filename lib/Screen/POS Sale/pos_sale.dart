@@ -40,6 +40,7 @@ class PosSale extends StatefulWidget {
 
 class _PosSaleState extends State<PosSale> {
   List<AddToCartModel> cartList = [];
+  var fruits = ['Apple', 'Banana', 'Mango', 'Orange'];
 
   @override
   void initState() {
@@ -136,8 +137,11 @@ class _PosSaleState extends State<PosSale> {
   }
 
   String getTotalAmount() {
+
     num total = 0.0;
     for (var item in cartList) {
+      print("nexte");
+      print(item.quantity);
       total = total + (double.parse(item.subTotal) * item.quantity);
     }
     return total.toString();
@@ -1061,6 +1065,105 @@ class _PosSaleState extends State<PosSale> {
                               ),
                             ],
                           ),
+Text("Search by name "),
+                          productList.when(data: (product) {
+                            allProductsNameList.clear();
+                            for (var element in product) {
+                              allProductsNameList.add(element.productName.removeAllWhiteSpace().toLowerCase());
+                              allProductsCodeList.add(element.productCode.removeAllWhiteSpace().toLowerCase());
+                            }
+                            return SizedBox(
+                                height: 50.0,
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    side: const BorderSide(color: kLitGreyColor),
+                                  ),
+                                  child:Autocomplete(
+
+                                    // optionsBuilder: (TextEditingValue textEditingValue) {
+                                    //   if (textEditingValue.text == '') {
+                                    //     return const Iterable<String>.empty();
+                                    //   }
+                                    //   return fruits.where((String option) {
+                                    //     return option
+                                    //         .toLowerCase()
+                                    //         .contains(textEditingValue.text.toLowerCase());
+                                    //   });
+                                    // },
+                                    optionsBuilder: (TextEditingValue textEditingValue) {
+                                      // _handleInput(textEditingValue.text);  // await if necessary
+                                      return allProductsNameList.where((String option) {
+                                        return option
+                                            .trim()
+                                            .toLowerCase()
+                                            .contains(textEditingValue.text.trim().toLowerCase());
+                                      });
+                                    },
+
+                                    onSelected: (String selection) {
+
+                                      if (selection != '') {
+                                        if (product.isEmpty) {
+                                          EasyLoading.showError('No Product Found');
+                                        }
+                                        for (int i = 0; i < product.length; i++) {
+                                          print("dndndv");
+                                          print(product[i].productName);
+                                          print(selection);
+                                          if (product[i].productName.trim().toLowerCase() == selection) {
+                                            AddToCartModel addToCartModel = AddToCartModel(
+                                                productName: product[i].productName,
+                                                productId: product[i].productCode,
+                                                nsnsac: product[i].nsnSAC,
+                                                productBrandName: product[i].brandName,
+                                                quantity: 1,
+                                                stock: product[i].productStock.toInt(),
+                                                productPurchasePrice: product[i].productPurchasePrice.toDouble(),
+                                                subTotal: productPriceChecker(product: product[i], customerType: selectedCustomerType));
+                                            setState(() {
+                                              if (!uniqueCheck(product[i].productCode)) {
+                                                cartList.add(addToCartModel);
+                                                nameCodeCategoryController.clear();
+                                                nameFocus.requestFocus();
+                                                searchProductCode = '';
+                                              } else {
+                                                nameCodeCategoryController.clear();
+                                                nameFocus.requestFocus();
+                                                searchProductCode = '';
+                                              }
+                                            });
+                                            break;
+                                          }
+                                          if (i + 1 == product.length) {
+                                            nameCodeCategoryController.clear();
+                                            nameFocus.requestFocus();
+                                            EasyLoading.showError('Not found');
+                                            setState(() {
+                                              searchProductCode = '';
+                                            });
+                                          }
+                                        }
+                                      }
+                                    },
+                                  ),
+                                ),
+
+                            );
+                          }, error: (e, stack) {
+                            return Center(
+                              child: Text(e.toString()),
+                            );
+                          }, loading: () {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }),
+
+
+
                           const SizedBox(height: 20.0),
 
                           ///_______Sale_Bord__________________________________________
@@ -2475,64 +2578,106 @@ class _PosSaleState extends State<PosSale> {
                                                     ),
 
                                                     ///____________quantity_________________________________________________
+                                                    // SizedBox(
+                                                    //   width: 110,
+                                                    //   child: Center(
+                                                    //     child: Row(
+                                                    //       children: [
+                                                    //         const Icon(FontAwesomeIcons.solidSquareMinus, color: kBlueTextColor).onTap(() {
+                                                    //           setState(() {
+                                                    //             cartList[index].quantity > 1 ? cartList[index].quantity-- : cartList[index].quantity = 1;
+                                                    //           });
+                                                    //         }),
+                                                    //         Container(
+                                                    //           width: 60,
+                                                    //           padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 2.0, bottom: 2.0),
+                                                    //           decoration: BoxDecoration(
+                                                    //             borderRadius: BorderRadius.circular(2.0),
+                                                    //             color: Colors.white,
+                                                    //           ),
+                                                    //           child: TextFormField(
+                                                    //             controller: quantityController,
+                                                    //             textAlign: TextAlign.center,
+                                                    //             onChanged: (value) {
+                                                    //               if (cartList[index].stock!.toInt() < value.toInt()) {
+                                                    //                 EasyLoading.showError('Out of Stock');
+                                                    //                 quantityController.clear();
+                                                    //               } else if (value == '') {
+                                                    //                 cartList[index].quantity = 1;
+                                                    //               } else if (value == '0') {
+                                                    //                 cartList[index].quantity = 1;
+                                                    //               } else {
+                                                    //                 cartList[index].quantity = value.toInt();
+                                                    //               }
+                                                    //             },
+                                                    //             onFieldSubmitted: (value) {
+                                                    //               if (value == '') {
+                                                    //                 setState(() {
+                                                    //                   cartList[index].quantity = 1;
+                                                    //                 });
+                                                    //               } else {
+                                                    //                 setState(() {
+                                                    //                   cartList[index].quantity = value.toInt();
+                                                    //                 });
+                                                    //               }
+                                                    //             },
+                                                    //             decoration: const InputDecoration(border: InputBorder.none),
+                                                    //           ),
+                                                    //         ),
+                                                    //         const Icon(FontAwesomeIcons.solidSquarePlus, color: kBlueTextColor).onTap(() {
+                                                    //           if (cartList[index].quantity < cartList[index].stock!.toInt()) {
+                                                    //             setState(() {
+                                                    //               cartList[index].quantity += 1;
+                                                    //               toast(cartList[index].quantity.toString());
+                                                    //             });
+                                                    //           } else {
+                                                    //             EasyLoading.showError('Out of Stock');
+                                                    //           }
+                                                    //         }),
+                                                    //       ],
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                     SizedBox(
-                                                      width: 110,
-                                                      child: Center(
-                                                        child: Row(
-                                                          children: [
-                                                            const Icon(FontAwesomeIcons.solidSquareMinus, color: kBlueTextColor).onTap(() {
-                                                              setState(() {
-                                                                cartList[index].quantity > 1 ? cartList[index].quantity-- : cartList[index].quantity = 1;
-                                                              });
-                                                            }),
-                                                            Container(
-                                                              width: 60,
-                                                              padding: const EdgeInsets.only(left: 10.0, right: 10.0, top: 2.0, bottom: 2.0),
-                                                              decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(2.0),
-                                                                color: Colors.white,
-                                                              ),
-                                                              child: TextFormField(
-                                                                controller: quantityController,
-                                                                textAlign: TextAlign.center,
-                                                                onChanged: (value) {
-                                                                  if (cartList[index].stock!.toInt() < value.toInt()) {
-                                                                    EasyLoading.showError('Out of Stock');
-                                                                    quantityController.clear();
-                                                                  } else if (value == '') {
-                                                                    cartList[index].quantity = 1;
-                                                                  } else if (value == '0') {
-                                                                    cartList[index].quantity = 1;
-                                                                  } else {
-                                                                    cartList[index].quantity = value.toInt();
-                                                                  }
-                                                                },
-                                                                onFieldSubmitted: (value) {
-                                                                  if (value == '') {
-                                                                    setState(() {
-                                                                      cartList[index].quantity = 1;
-                                                                    });
-                                                                  } else {
-                                                                    setState(() {
-                                                                      cartList[index].quantity = value.toInt();
-                                                                    });
-                                                                  }
-                                                                },
-                                                                decoration: const InputDecoration(border: InputBorder.none),
-                                                              ),
-                                                            ),
-                                                            const Icon(FontAwesomeIcons.solidSquarePlus, color: kBlueTextColor).onTap(() {
-                                                              if (cartList[index].quantity < cartList[index].stock!.toInt()) {
-                                                                setState(() {
-                                                                  cartList[index].quantity += 1;
-                                                                  toast(cartList[index].quantity.toString());
-                                                                });
-                                                              } else {
-                                                                EasyLoading.showError('Out of Stock');
-                                                              }
-                                                            }),
-                                                          ],
+                                                      width: 70,
+                                                      child: TextFormField(
+                                                        textAlign: TextAlign.center,
+                                                        maxLines: 1,
+                                                        showCursor: true,
+                                                        cursorColor: kTitleColor,
+                                                        controller: quantityController,
+                                                        onChanged: (value) {
+                                                          if (value == "" || value == "0") {
+                                                            cartList[index].quantity = 1;
+                                                          } else {
+                                                            cartList[index].quantity = num.parse(value);
+                                                          }
+                                                        },
+                                                        onFieldSubmitted: (value) {
+                                                          if (value == '' || value == '0') {
+                                                            setState(() {
+                                                              cartList[index].quantity = 1;
+                                                            });
+                                                          } else {
+                                                            setState(() {
+                                                              cartList[index].quantity = num.parse(value);
+                                                            });
+                                                          }
+                                                        },
+                                                        decoration: kInputDecoration.copyWith(
+                                                          enabledBorder: const OutlineInputBorder(
+                                                            borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                                                            borderSide: BorderSide(color: kBorderColorTextField, width: 1),
+                                                          ),
+                                                          focusedBorder: const OutlineInputBorder(
+                                                            borderRadius: BorderRadius.all(Radius.circular(6.0)),
+                                                            borderSide: BorderSide(color: kBorderColorTextField, width: 1),
+                                                          ),
                                                         ),
+                                                        // inputFormatters: [
+                                                        //   FilteringTextInputFormatter.digitsOnly,
+                                                        //   LengthLimitingTextInputFormatter(6),
+                                                        // ],
                                                       ),
                                                     ),
 

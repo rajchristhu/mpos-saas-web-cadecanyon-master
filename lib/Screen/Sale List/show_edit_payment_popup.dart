@@ -114,7 +114,7 @@ class _ShowEditPaymentPopUpState extends State<ShowEditPaymentPopUp> {
   }
 
   SaleTransactionModel checkLossProfit({required SaleTransactionModel transitionModel}) {
-    int totalQuantity = 0;
+    num totalQuantity = 0;
     double lossProfit = 0;
     double totalPurchasePrice = 0;
     double totalSalePrice = 0;
@@ -391,7 +391,7 @@ print("fjnfjenf");
                                                                     quantity: pastElement.quantity - futureElement.quantity,
                                                                     serialNumber: pastElement.serialNumber != []
                                                                         ? futureElement.quantity < pastElement.serialNumber!.length
-                                                                            ? pastElement.serialNumber!.sublist(0, futureElement.quantity + 1)
+                                                                            ? pastElement.serialNumber!.sublist(0, (futureElement.quantity + 1) as int?)
                                                                             : pastElement.serialNumber
                                                                         : [],
                                                                     productPurchasePrice: pastElement.productPurchasePrice,

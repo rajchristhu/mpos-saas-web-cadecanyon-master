@@ -25,7 +25,7 @@ class AddToCartModel {
   dynamic subTotal;
   dynamic productPurchasePrice;
   dynamic uniqueCheck;
-  int quantity = 1;
+  num quantity = 1;
   dynamic productDetails;
   dynamic productBrandName;
   // Item store on which index of cart so we can update or delete cart easily, initially it is -1
