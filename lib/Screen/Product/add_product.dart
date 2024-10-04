@@ -2208,7 +2208,8 @@ class _AddProductState extends State<AddProduct> {
                                                 const SizedBox(height: 20.0),       Row(
                                                   children: [
                                                     Expanded(
-                                                      child: TextFormField(
+                                                      child:
+                                                      TextFormField(
                                                         validator: (value) {
                                                           return null;
                                                         },

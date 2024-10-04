@@ -50,6 +50,7 @@ class _PosSaleState extends State<PosSale> {
   }
 
   FocusNode serialFocus = FocusNode();
+  late TextEditingController textEditingController;
 
   String searchProductCode = '';
 
@@ -558,7 +559,7 @@ class _PosSaleState extends State<PosSale> {
                                       nsnsac: productModel.nsnSAC,
                                       productId: productModel.productCode,
                                       productBrandName: productModel.brandName,
-                                      productPurchasePrice: productModel.productPurchasePrice.toDouble(),
+                                      productPurchasePrice: double.parse(productModel.mrp.toString()),
                                       subTotal: productPriceChecker(product: productModel, customerType: selectedCustomerType),
                                       serialNumber: selectedSerialNumbers,
                                       quantity: selectedSerialNumbers.isEmpty ? 1 : selectedSerialNumbers.length,
@@ -963,7 +964,7 @@ class _PosSaleState extends State<PosSale> {
                                                     productBrandName: product[i].brandName,
                                                     quantity: 1,
                                                     stock: product[i].productStock.toInt(),
-                                                    productPurchasePrice: product[i].productPurchasePrice.toDouble(),
+                                                    productPurchasePrice: double.parse(product[i].mrp.toString()),
                                                     subTotal: productPriceChecker(product: product[i], customerType: selectedCustomerType));
                                                 setState(() {
                                                   if (!uniqueCheck(product[i].productCode)) {
@@ -1102,18 +1103,25 @@ Text("Search by name "),
                                             .contains(textEditingValue.text.trim().toLowerCase());
                                       });
                                     },
-
+                                    fieldViewBuilder: (BuildContext context, TextEditingController fieldTextEditingController,
+                                        FocusNode fieldFocusNode, VoidCallback onFieldSubmitted) {
+                                      textEditingController = fieldTextEditingController;
+                                      return TextField(
+                                        controller: fieldTextEditingController,
+                                        focusNode: fieldFocusNode,
+                                        style: const TextStyle(fontWeight: FontWeight.bold),
+                                      );
+                                    },
                                     onSelected: (String selection) {
-
                                       if (selection != '') {
                                         if (product.isEmpty) {
                                           EasyLoading.showError('No Product Found');
                                         }
                                         for (int i = 0; i < product.length; i++) {
                                           print("dndndv");
-                                          print(product[i].productName);
+                                          print(product[i].productName.trim().toLowerCase());
                                           print(selection);
-                                          if (product[i].productName.trim().toLowerCase() == selection) {
+                                          if (product[i].productName.trim().toLowerCase().replaceAll(" ", '') == selection) {
                                             AddToCartModel addToCartModel = AddToCartModel(
                                                 productName: product[i].productName,
                                                 productId: product[i].productCode,
@@ -1121,7 +1129,7 @@ Text("Search by name "),
                                                 productBrandName: product[i].brandName,
                                                 quantity: 1,
                                                 stock: product[i].productStock.toInt(),
-                                                productPurchasePrice: product[i].productPurchasePrice.toDouble(),
+                                                productPurchasePrice: double.parse(product[i].mrp.toString()),
                                                 subTotal: productPriceChecker(product: product[i], customerType: selectedCustomerType));
                                             setState(() {
                                               if (!uniqueCheck(product[i].productCode)) {
@@ -1146,6 +1154,7 @@ Text("Search by name "),
                                             });
                                           }
                                         }
+                                        textEditingController.text="";
                                       }
                                     },
                                   ),

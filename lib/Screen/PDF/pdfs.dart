@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'package:date_time_format/date_time_format.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +17,7 @@ import 'package:printing/printing.dart';
 import 'package:salespro_admin/model/personal_information_model.dart';
 import '../../model/add_to_cart_model.dart';
 import '../../model/due_transaction_model.dart';
+import '../../model/product_model.dart';
 import '../../model/transition_model.dart';
 import '../POS Sale/pos_sale.dart';
 import '../Purchase/purchase.dart';
@@ -38,9 +40,16 @@ class GeneratePdfAndPrint {
     final pdf = pw.Document(
       title: "Order Invoice",
     );
-    // int qty = saleTransactionModel.productList
-    //     .fold(0, (int accumulator, OrderItem e) => accumulator + e.qty);
-
+    int? qty = saleTransactionModel.productList?.fold(
+        0,
+        (int? accumulator, AddToCartModel e) =>
+            accumulator!.toInt() + e.quantity.toInt());
+    int? savePrice = saleTransactionModel.productList?.fold(
+        0,
+        (int? accumulator, AddToCartModel e) =>
+            e.productPurchasePrice!.toInt() - int.parse(e.subTotal.toString()));
+print("fdkfnkdfkdf");
+print(savePrice);
     // DeliveryAddress address = saleTransactionModel.deliveryAddress;
     pdf.addPage(
       pw.Page(
@@ -63,17 +72,37 @@ class GeneratePdfAndPrint {
               crossAxisAlignment: pw.CrossAxisAlignment.center,
               mainAxisAlignment: pw.MainAxisAlignment.start,
               children: [
-                pw.Container(
-                  height: 40,
-                  padding: const pw.EdgeInsets.all(0),
-                  child: pw.Text(
-                    "Sri Velan Store",
-                    maxLines: 1,
-                    style: pw.TextStyle(
-                      fontSize: 24,
-                      color: PdfColor.fromHex("#000000"),
-                      fontWeight: pw.FontWeight.bold,
-                    ),
+                pw.Text(
+                  "WELCOME",
+                  maxLines: 1,
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    color: PdfColor.fromHex("#000000"),
+                  ),
+                ),
+                pw.Text(
+                  "SRI VELAN STORE",
+                  maxLines: 1,
+                  style: pw.TextStyle(
+                    fontSize: 24,
+                    color: PdfColor.fromHex("#000000"),
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  "NADUKADAI",
+                  maxLines: 1,
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    color: PdfColor.fromHex("#000000"),
+                  ),
+                ),
+                pw.Text(
+                  "6374869589, 9384250582",
+                  maxLines: 1,
+                  style: pw.TextStyle(
+                    fontSize: 12,
+                    color: PdfColor.fromHex("#000000"),
                   ),
                 ),
                 pw.Container(
@@ -92,191 +121,171 @@ class GeneratePdfAndPrint {
                   ),
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
                     children: [
-                      pw.Text(
-                        saleTransactionModel.customer.customerAddress,
-                        maxLines: 1,
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          color: PdfColor.fromHex("#000000"),
-                          fontWeight: pw.FontWeight.normal,
-                          lineSpacing: 2.5,
-                          height: 2.5,
-                        ),
-                      ),
-                      pw.Text(
-                        "Address: Main Road Nadukadai",
-                        maxLines: 1,
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          color: PdfColor.fromHex("#000000"),
-                          fontWeight: pw.FontWeight.normal,
-                          lineSpacing: 2.5,
-                          height: 2.5,
-                        ),
-                      ),
-                      pw.Text(
-                        "Contact: +91 9585698883",
-                        maxLines: 1,
-                        style: pw.TextStyle(
-                          fontSize: 10,
-                          color: PdfColor.fromHex("#000000"),
-                          fontWeight: pw.FontWeight.normal,
-                          lineSpacing: 2.5,
-                          height: 2.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                pw.Container(
-                  margin: const pw.EdgeInsets.all(0),
-                  padding: const pw.EdgeInsets.all(0),
-                  color: PdfColor.fromHex("#050505"),
-                  width: 300,
-                  height: 0.01,
-                ),
-                pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
-                  margin: const pw.EdgeInsets.symmetric(
-                    vertical: 10,
-                  ),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.center,
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                    children: [
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                        child: buildInvoiceRow(
-                          "Invoice Number",
-                          saleTransactionModel.invoiceNumber,
-                          keyStyle,
-                          valueStyle,
-                        ),
-                      ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Name",
-                      //     address.name,
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Phone",
-                      //     address.phone,
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                        child: buildInvoiceRow(
-                          "Date",
-                          saleTransactionModel.purchaseDate,
-                          keyStyle,
-                          valueStyle,
-                        ),
-                      ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Address",
-                      //     "${getText(address.addressLine1)}${getText(address.addressLine2)}${getText(address.area)}${getText(address.pinCode)}${getText(address.state)}.",
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Landmark",
-                      //     "${address.landMark}.",
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-                pw.Container(
-                  margin: const pw.EdgeInsets.all(0),
-                  padding: const pw.EdgeInsets.all(0),
-                  color: PdfColor.fromHex("#050505"),
-                  width: 300,
-                  height: 0.01,
-                ),
-                pw.Container(
-                  padding: const pw.EdgeInsets.symmetric(
-                    horizontal: 30,
-                  ),
-                  margin: const pw.EdgeInsets.all(10),
-                  child:  pw.Row(
-                    children: [
-                      pw.Expanded(
-                          child: pw.SizedBox(
-                            width: 190,
-                            child: pw.Text(
-                              "Name",
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.SizedBox(
+                              width: 7,
+                            ),
+                            pw.Text(
+                              "INVOICE NO" +
+                                  "  : " +
+                                  saleTransactionModel.invoiceNumber,
+                              maxLines: 1,
                               style: pw.TextStyle(
                                 fontSize: 10,
                                 color: PdfColor.fromHex("#000000"),
-                                fontWeight: pw.FontWeight.normal,
                               ),
+                            ),
+                            pw.Text(
+                              "Date" +
+                                  "  : " +
+                                  saleTransactionModel.purchaseDate,
                               maxLines: 1,
-                              overflow: pw.TextOverflow.clip,
-                            ),
-                          )),
-                      pw.Expanded(
-                          child: pw.Row(children: [
-
-                            pw.Text(
-                              'CGST ',
                               style: pw.TextStyle(
-                                fontSize: 9,
+                                fontSize: 10,
                                 color: PdfColor.fromHex("#000000"),
-                                fontWeight: pw.FontWeight.normal,
                               ),
                             ),
-                            pw.SizedBox(width: 10,),
-
+                            pw.SizedBox(
+                              width: 7,
+                            ),
+                          ]),
+                      pw.SizedBox(
+                        height: 2,
+                      ),
+                      pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.SizedBox(
+                              width: 2,
+                            ),
                             pw.Text(
-                              'SGST',
+                              "COUNTER" + "  : 1",
+                              maxLines: 1,
                               style: pw.TextStyle(
-                                fontSize: 9,
+                                fontSize: 10,
                                 color: PdfColor.fromHex("#000000"),
-                                fontWeight: pw.FontWeight.normal,
                               ),
                             ),
-                            pw.SizedBox(width: 10,),
-
                             pw.Text(
-                              'Quan x Price',
+                              "CASHIER" + "  : NAME",
+                              maxLines: 1,
                               style: pw.TextStyle(
-                                fontSize: 9,
+                                fontSize: 10,
                                 color: PdfColor.fromHex("#000000"),
-                                fontWeight: pw.FontWeight.normal,
                               ),
                             ),
-                          ])
-
-                        // pw.Spacer(),
-
-                      )
+                            pw.SizedBox(
+                              width: 7,
+                            ),
+                          ]),
                     ],
                   ),
                 ),
-
+                pw.Container(
+                  margin: const pw.EdgeInsets.all(0),
+                  padding: const pw.EdgeInsets.all(0),
+                  color: PdfColor.fromHex("#050505"),
+                  width: 300,
+                  height: 0.01,
+                ),
                 pw.Container(
                   padding: const pw.EdgeInsets.symmetric(
-                    horizontal: 30,
+                    horizontal: 10,
                   ),
+                  margin: const pw.EdgeInsets.all(4),
+                  child: pw.Row(
+                    children: [
+                      pw.Expanded(
+                          child: pw.Row(children: [
+                        pw.Text(
+                          'S/N',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          width: 10,
+                        ),
+                        pw.Text(
+                          'NAME',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ])
+
+                          // pw.Spacer(),
+
+                          ),
+                      pw.SizedBox(width: 6),
+                      pw.Expanded(
+                          child: pw.Row(children: [
+                        pw.Text(
+                          'MRP',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          width: 10,
+                        ),
+                        pw.Text(
+                          'QTY',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ])
+
+                          // pw.Spacer(),
+
+                          ),
+                      pw.Expanded(
+                          child: pw.Row(children: [
+                        pw.Text(
+                          'RATE',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                        pw.SizedBox(
+                          width: 10,
+                        ),
+                        pw.Text(
+                          'TOTAL',
+                          style: pw.TextStyle(
+                            fontSize: 12,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.bold,
+                          ),
+                        ),
+                      ])
+
+                          // pw.Spacer(),
+
+                          )
+                    ],
+                  ),
+                ),
+                pw.Container(
+                  padding: const pw.EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
+                  margin: const pw.EdgeInsets.all(6),
                   child: pw.ListView.builder(
                     itemCount: saleTransactionModel.productList!.length,
                     itemBuilder: (context, index) {
@@ -286,60 +295,117 @@ class GeneratePdfAndPrint {
                         children: [
                           pw.Container(
                             padding: pw.EdgeInsets.zero,
-                            child: pw.Row(
-                              children: [
-                                pw.Expanded(
-                                    child: pw.SizedBox(
-                                  width: 190,
-                                  child: pw.Text(
-                                    "${index + 1}. ${saleTransactionModel.productList![index].productName}",
-                                    style: pw.TextStyle(
-                                      fontSize: 10,
-                                      color: PdfColor.fromHex("#000000"),
-                                      fontWeight: pw.FontWeight.normal,
+                            child: pw.Container(
+                              padding: const pw.EdgeInsets.symmetric(
+                                horizontal: 0,
+                              ),
+                              margin: const pw.EdgeInsets.all(4),
+                              child: pw.Row(
+                                children: [
+                                  pw.Expanded(
+                                      child: pw.Row(children: [
+                                    pw.Text(
+                                      (index + 1).toString() + ".",
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.normal,
+                                      ),
                                     ),
-                                    maxLines: 1,
-                                    overflow: pw.TextOverflow.clip,
-                                  ),
-                                )),
-                                pw.Expanded(
-                                    child: pw.Row(children: [
-                                      pw.SizedBox(width: 10,),
-
-                                  pw.Text(
-                                    '${saleTransactionModel.cgst.toString()} ',
-                                    style: pw.TextStyle(
-                                      fontSize: 9,
-                                      color: PdfColor.fromHex("#000000"),
-                                      fontWeight: pw.FontWeight.normal,
+                                    pw.SizedBox(
+                                      width: 13,
                                     ),
-
-                                  ),
-                                      pw.SizedBox(width: 25,),
-                                  pw.Text(
-                                    '${saleTransactionModel.sgst.toString()} ',
-                                    style: pw.TextStyle(
-                                      fontSize: 9,
-                                      color: PdfColor.fromHex("#000000"),
-                                      fontWeight: pw.FontWeight.normal,
-                                    ),
-                                  ),
-                                      pw.SizedBox(width: 25,),
-
-                                      pw.Text(
-                                    '${saleTransactionModel.productList![index].quantity} x Rs. ${saleTransactionModel.productList![index].subTotal}',
-                                    style: pw.TextStyle(
-                                      fontSize: 9,
-                                      color: PdfColor.fromHex("#000000"),
-                                      fontWeight: pw.FontWeight.normal,
-                                    ),
-                                  ),
-                                ])
-
-                                    // pw.Spacer(),
-
+                                    pw.Expanded(
+                                      child: pw.Text(
+                                        saleTransactionModel
+                                            .productList![index].productName!
+                                            .toString(),
+                                        maxLines: 3,
+                                        style: pw.TextStyle(
+                                          fontSize: 12,
+                                          color: PdfColor.fromHex("#000000"),
+                                          fontWeight: pw.FontWeight.normal,
+                                        ),
+                                      ),
                                     )
-                              ],
+                                  ])
+
+                                      // pw.Spacer(),
+
+                                      ),
+                                  pw.SizedBox(width: 6),
+                                  pw.Expanded(
+                                      child: pw.Row(children: [
+                                    pw.Text(
+                                      "Rs. " +
+                                          saleTransactionModel
+                                              .productList![index]
+                                              .productPurchasePrice
+                                              .toString(),
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.normal,
+                                      ),
+                                    ),
+                                    pw.SizedBox(
+                                      width: 13,
+                                    ),
+                                    pw.Text(
+                                      saleTransactionModel
+                                          .productList![index].quantity
+                                          .toString(),
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.normal,
+                                      ),
+                                    ),
+                                  ])
+
+                                      // pw.Spacer(),
+
+                                      ),
+                                  pw.Expanded(
+                                      child: pw.Row(children: [
+                                    pw.Text(
+                                      "Rs. " +
+                                          saleTransactionModel
+                                              .productList![index].subTotal!
+                                              .toString(),
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.normal,
+                                      ),
+                                    ),
+                                    pw.SizedBox(
+                                      width: 13,
+                                    ),
+                                    pw.Text(
+                                      "Rs. " +
+                                          (int.parse(saleTransactionModel
+                                                      .productList![index]
+                                                      .subTotal
+                                                      .toString()) *
+                                                  int.parse(saleTransactionModel
+                                                      .productList![index]
+                                                      .quantity
+                                                      .toString()))
+                                              .toString(),
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.normal,
+                                      ),
+                                    ),
+                                  ])
+
+                                      // pw.Spacer(),
+
+                                      )
+                                ],
+                              ),
                             ),
                           ),
                           // pw.Container(
@@ -370,7 +436,6 @@ class GeneratePdfAndPrint {
                   ),
                 ),
                 pw.Container(
-                  height: 250,
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.center,
                     mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
@@ -381,59 +446,88 @@ class GeneratePdfAndPrint {
                         height: 0.5,
                         padding: const pw.EdgeInsets.symmetric(horizontal: 10),
                       ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                        child: buildInvoiceRow(
-                          "Total Item ",
-                          ": ${saleTransactionModel.productList!.length}.",
-                          keyStyle,
-                          valueStyle,
-                        ),
-                      ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Total Quantity ",
-                      //     ": $qty.",
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                      // pw.Container(
-                      //   padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                      //   child: buildInvoiceRow(
-                      //     "Delivery charge ",
-                      //     ": Rs. ${saleTransactionModel.deliveryCharge}.",
-                      //     keyStyle,
-                      //     valueStyle,
-                      //   ),
-                      // ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                        child: buildInvoiceRow(
-                          "Grand Total ",
-                          ": Rs. ${saleTransactionModel.totalAmount}.",
-                          pw.TextStyle(
-                            fontSize: 12,
-                            color: PdfColor.fromHex("#000000"),
-                            fontWeight: pw.FontWeight.bold,
+
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text(
+                                "TOTAL ITEM : " +
+                                    saleTransactionModel.productList!.length
+                                        .toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  color: PdfColor.fromHex("#000000"),
+                                  fontWeight: pw.FontWeight.normal,
+                                ),
+                              ),
+                              pw.Text(
+                                "TOTAL QUANTITY : " + qty.toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  color: PdfColor.fromHex("#000000"),
+                                  fontWeight: pw.FontWeight.normal,
+                                ),
+                              ),
+                              pw.Text(
+                                "TOTAL SAVINGS : RS. " +savePrice.toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 10,
+                                  color: PdfColor.fromHex("#000000"),
+                                  fontWeight: pw.FontWeight.normal,
+                                ),
+                              ),
+                            ],
                           ),
-                          pw.TextStyle(
-                            fontSize: 12,
-                            color: PdfColor.fromHex("#000000"),
-                            fontWeight: pw.FontWeight.bold,
+                          pw.Row(
+                            mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                            children: [
+                              pw.Text(
+                                "Grand Total : ",
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  color: PdfColor.fromHex("#000000"),
+                                  fontWeight: pw.FontWeight.normal,
+                                ),
+                              ),
+                              pw.Text(
+                                "Rs. " +
+                                    saleTransactionModel.totalAmount.toString(),
+                                style: pw.TextStyle(
+                                  fontSize: 14,
+                                  color: PdfColor.fromHex("#000000"),
+                                  fontWeight: pw.FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      pw.Row(
+                        mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                        children: [
+                          pw.Text(
+                            "INCLUSIVE OF GST TAXES",
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColor.fromHex("#000000"),
+                              fontWeight: pw.FontWeight.normal,
+                            ),
                           ),
-                        ),
+                          pw.Text(
+                            "Payment Mode : Cash",
+                            style: pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColor.fromHex("#000000"),
+                              fontWeight: pw.FontWeight.normal,
+                            ),
+                          ),
+                        ],
                       ),
-                      pw.Container(
-                        padding: const pw.EdgeInsets.symmetric(horizontal: 20),
-                        child: buildInvoiceRow(
-                          "Paid By ",
-                          ": Cash On Delivery",
-                          keyStyle,
-                          valueStyle,
-                        ),
-                      ),
+
                       pw.Container(
                         color: PdfColor.fromHex("#050505"),
                         width: 300,
@@ -457,35 +551,38 @@ class GeneratePdfAndPrint {
                       //     valueStyle,
                       //   ),
                       // ),
-                      pw.Container(
-                        color: PdfColor.fromHex("#050505"),
-                        width: 300,
-                        height: 0.01,
-                      ),
+
                       pw.Center(
                         child: pw.Text(
-                          "Thank You !",
+                          "THANK YOU VISIT AGAIN !",
                           maxLines: 1,
                           style: pw.TextStyle(
-                            fontSize: 12,
+                            fontSize: 14,
                             color: PdfColor.fromHex("#000000"),
                             fontWeight: pw.FontWeight.bold,
                           ),
                         ),
                       ),
-                      pw.Container(
-                        color: PdfColor.fromHex("#050505"),
-                        width: 300,
-                        height: 0.01,
-                      ),
                       pw.Center(
                         child: pw.Text(
-                          "\u00a9 ${DateTime.now().year} Velan Store, All right reserved",
+                          "Door delivery available",
+                          maxLines: 1,
+                          style: pw.TextStyle(
+                            fontSize: 7,
+                            color: PdfColor.fromHex("#000000"),
+                            fontWeight: pw.FontWeight.normal,
+                          ),
+                        ),
+                      ),
+
+                      pw.Center(
+                        child: pw.Text(
+                          "Powered by Dbillz.com",
                           maxLines: 1,
                           style: pw.TextStyle(
                             fontSize: 7.5,
                             color: PdfColor.fromHex("#000000"),
-                            fontWeight: pw.FontWeight.bold,
+                            fontWeight: pw.FontWeight.normal,
                           ),
                         ),
                       ),
@@ -500,6 +597,273 @@ class GeneratePdfAndPrint {
     );
 
     final pdfBytes = await pdf.save();
+    final blob = html.Blob([Uint8List.fromList(pdfBytes)], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+
+    html.window.open(url, '_blank');
+  }
+
+  var pwdWidgets = <Widget>[];
+
+  Future<void> generatePdfNew({
+    required ProductModel saleTransactionModel,
+    required BuildContext context,
+    required String exp,
+    required String pkd,
+    required int count,
+  }) async {
+    final pdf = pw.Document(
+      title: "Order Invoice",
+    );
+    // int qty = saleTransactionModel.productList
+    //     .fold(0, (int accumulator, OrderItem e) => accumulator + e.qty);
+
+    // DeliveryAddress address = saleTransactionModel.deliveryAddress;
+    final doc = pw.Document();
+
+    for (int i = 0; i <= count; i++) {
+      doc.addPage(
+        pw.MultiPage(
+          pageFormat: const PdfPageFormat(275, 72, marginAll: 0),
+          build: (pw.Context context) {
+            pw.TextStyle keyStyle = pw.TextStyle(
+              fontSize: 9.5,
+              color: PdfColor.fromHex("#000000"),
+              fontWeight: pw.FontWeight.bold,
+            );
+            pw.TextStyle valueStyle = pw.TextStyle(
+              fontSize: 10,
+              color: PdfColor.fromHex("#000000"),
+              fontWeight: pw.FontWeight.normal,
+            );
+            return [
+              pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                children: [
+                  pw.SizedBox(width: 20),
+                  pw.ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (context, index) {
+                      return pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceAround,
+                          children: [
+                            // pw.SizedBox(width: 10),
+                            pw.Center(
+                              child: pw.Column(
+                                crossAxisAlignment:
+                                    pw.CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    pw.MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  pw.SizedBox(height: 5),
+                                  pw.Container(
+                                    padding: pw.EdgeInsets.all(0),
+                                    child: pw.Text(
+                                      "Sri Velan Store",
+                                      maxLines: 1,
+                                      style: pw.TextStyle(
+                                        fontSize: 10,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   margin: const EdgeInsets.all(0),
+                                  //   padding: const EdgeInsets.all(0),
+                                  //   color: PdfColor.fromHex("#050505"),
+                                  //   width: 300,
+                                  //   height: 0.01,
+                                  // ),
+                                  pw.Container(
+                                    padding: pw.EdgeInsets.symmetric(
+                                      vertical: 0,
+                                    ),
+                                    margin: pw.EdgeInsets.symmetric(
+                                      vertical: 0,
+                                    ),
+                                    child: pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        pw.Text(
+                                          saleTransactionModel.productName,
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                            lineSpacing: 2.5,
+                                          ),
+                                        ),
+                                        pw.SizedBox(height: 1.5),
+                                        pw.BarcodeWidget(
+                                            barcode: Barcode.code128(),
+                                            data: saleTransactionModel
+                                                .productCode,
+                                            width: 80,
+                                            height: 10),
+                                        pw.SizedBox(height: 1),
+
+                                        pw.Text(
+                                          "Pkd On: $pkd",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 7,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                          ),
+                                        ),
+                                        pw.Text(
+                                          "Exp On: $exp",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 7,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                          ),
+                                        ),
+                                        pw.SizedBox(height: 1),
+                                        pw.Text(
+                                          "RS: ${saleTransactionModel.productSalePrice}",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                            lineSpacing: 2.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // pw.Container(
+                                  //   margin: const pw.EdgeInsets.all(0),
+                                  //   padding: const pw.EdgeInsets.all(0),
+                                  //   color: PdfColor.fromHex("#050505"),
+                                  //   width: 300,
+                                  //   height: 0.01,
+                                  // ),
+                                ],
+                              ),
+                            ),
+                            // pw.SizedBox(width: 20),
+                            pw.Center(
+                              child: pw.Column(
+                                crossAxisAlignment:
+                                    pw.CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    pw.MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  pw.SizedBox(height: 5),
+                                  pw.Container(
+                                    padding: pw.EdgeInsets.all(0),
+                                    child: pw.Text(
+                                      "Sri Velan Store",
+                                      maxLines: 1,
+                                      style: pw.TextStyle(
+                                        fontSize: 10,
+                                        color: PdfColor.fromHex("#000000"),
+                                        fontWeight: pw.FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   margin: const EdgeInsets.all(0),
+                                  //   padding: const EdgeInsets.all(0),
+                                  //   color: PdfColor.fromHex("#050505"),
+                                  //   width: 300,
+                                  //   height: 0.01,
+                                  // ),
+                                  pw.Container(
+                                    padding: pw.EdgeInsets.symmetric(
+                                      vertical: 0,
+                                    ),
+                                    margin: pw.EdgeInsets.symmetric(
+                                      vertical: 0,
+                                    ),
+                                    child: pw.Column(
+                                      crossAxisAlignment:
+                                          pw.CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          pw.MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        pw.Text(
+                                          saleTransactionModel.productName,
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                            lineSpacing: 2.5,
+                                          ),
+                                        ),
+                                        pw.SizedBox(height: 1.5),
+                                        pw.BarcodeWidget(
+                                            barcode: Barcode.code128(),
+                                            data: saleTransactionModel
+                                                .productCode,
+                                            width: 80,
+                                            height: 10),
+                                        pw.SizedBox(height: 1),
+                                        pw.Text(
+                                          "Pkd On: $pkd",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 7,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                          ),
+                                        ),
+                                        pw.Text(
+                                          "Exp On: $exp",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 7,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                          ),
+                                        ),
+
+                                        pw.SizedBox(height: 1),
+                                        pw.Text(
+                                          "RS: ${saleTransactionModel.productSalePrice}",
+                                          maxLines: 1,
+                                          style: pw.TextStyle(
+                                            fontSize: 8,
+                                            color: PdfColor.fromHex("#000000"),
+                                            fontWeight: pw.FontWeight.normal,
+                                            lineSpacing: 2.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // pw.Container(
+                                  //   margin: const pw.EdgeInsets.all(0),
+                                  //   padding: const pw.EdgeInsets.all(0),
+                                  //   color: PdfColor.fromHex("#050505"),
+                                  //   width: 300,
+                                  //   height: 0.01,
+                                  // ),
+                                ],
+                              ),
+                            ),
+                          ]);
+                    },
+                  )
+                ],
+              )
+            ];
+          },
+        ),
+      );
+    }
+
+    final pdfBytes = await doc.save();
     final blob = html.Blob([Uint8List.fromList(pdfBytes)], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
 

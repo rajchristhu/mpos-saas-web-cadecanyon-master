@@ -620,7 +620,7 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
 
                                                       widget.isFromQuotation ? Navigator.pop(context) : null;
                                                       EasyLoading.dismiss();
-                                                      Navigator.pop(context);
+                                                      // Navigator.pop(context);
 
                                                     } catch (e) {
                                                       EasyLoading.dismiss();
