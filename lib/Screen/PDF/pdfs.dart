@@ -871,10 +871,14 @@ print(savePrice);
   }
 
   double getInvoiceHeight(
-      SaleTransactionModel saleTransactionModel, BuildContext context) {
+      SaleTransactionModel saleTransactionModel, BuildContext context) {print(saleTransactionModel.productList!.length);
     var saleTransactionModelHeight =
         saleTransactionModel.productList!.length * 0.5;
-    return (530.0 +
+    return  saleTransactionModel.productList!.length<10?(530.0 +
+        (saleTransactionModelHeight * MediaQuery.of(context).size.height) *
+            0.099):saleTransactionModel.productList!.length<20?(800 +
+        (saleTransactionModelHeight * MediaQuery.of(context).size.height) *
+            0.099):(1200 +
         (saleTransactionModelHeight * MediaQuery.of(context).size.height) *
             0.099);
   }

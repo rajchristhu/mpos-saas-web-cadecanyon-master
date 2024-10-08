@@ -517,7 +517,7 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                                           print('All product stocks updated successfully');
                                                           await GeneratePdfAndPrint().generatePdf( saleTransactionModel: widget.transitionModel,context:context);
 
-                                                          Navigator.of(context).pushNamed(MtHomeScreen.route);
+                                                          // Navigator.of(context).pushNamed(MtHomeScreen.route);
 
                                                         } catch (e) {
                                                           print('loegdfdfdfdfdfn');
