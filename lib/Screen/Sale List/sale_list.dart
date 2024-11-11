@@ -234,7 +234,7 @@ class _SaleListState extends State<SaleList> {
                                                                           //     personalInformationModel: profile.value!, saleTransactionModel: reTransaction[index]);
                                                                           //
 
-                                                                          await GeneratePdfAndPrint().generatePdf( saleTransactionModel: reTransaction[index],context:context);
+                                                                          await GeneratePdfAndPrint().generatePdf( saleTransactionModel: reTransaction[index],context:context, pay: '0', change: '0');
                                                                           // Navigator.push(
                                                                           //   context,
                                                                           //   MaterialPageRoute(

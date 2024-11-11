@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:salespro_admin/Screen/Widgets/Constant%20Data/constant.dart';
 import 'package:salespro_admin/Screen/Widgets/TopBar/top_bar_widget.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:salespro_admin/generated/l10n.dart' as lang;
 import '../../Provider/customer_provider.dart';
 import '../../Provider/due_transaction_provider.dart';
@@ -171,44 +170,44 @@ class _TablateHomeState extends State<TablateHome> {
   ];
 
   /// Returns the defaul spline chart.
-  SfCartesianChart _buildDefaultSplineChart() {
-    return SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      legend: const Legend(isVisible: true),
-      primaryXAxis: CategoryAxis(majorGridLines: const MajorGridLines(width: 0), labelPlacement: LabelPlacement.onTicks),
-      primaryYAxis: NumericAxis(
-          minimum: 00,
-          maximum: 500,
-          axisLine: const AxisLine(width: 0),
-          edgeLabelPlacement: EdgeLabelPlacement.shift,
-          labelFormat: '{value}k',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getDefaultSplineSeries(),
-      tooltipBehavior: TooltipBehavior(enable: true),
-    );
-  }
-
-  /// Returns the list of chart series which need to render on the spline chart.
-  List<SplineSeries<ChartSampleData, String>> _getDefaultSplineSeries() {
-    return <SplineSeries<ChartSampleData, String>>[
-      SplineSeries<ChartSampleData, String>(
-        dataSource: chartData,
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        markerSettings: const MarkerSettings(isVisible: true),
-        color: kGreenTextColor,
-        name: 'Sales',
-      ),
-      SplineSeries<ChartSampleData, String>(
-        dataSource: chartData,
-        name: 'Collection',
-        markerSettings: const MarkerSettings(isVisible: true),
-        color: kRedTextColor,
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.secondSeriesYValue,
-      )
-    ];
-  }
+  // SfCartesianChart _buildDefaultSplineChart() {
+  //   return SfCartesianChart(
+  //     plotAreaBorderWidth: 0,
+  //     legend: const Legend(isVisible: true),
+  //     primaryXAxis: CategoryAxis(majorGridLines: const MajorGridLines(width: 0), labelPlacement: LabelPlacement.onTicks),
+  //     primaryYAxis: NumericAxis(
+  //         minimum: 00,
+  //         maximum: 500,
+  //         axisLine: const AxisLine(width: 0),
+  //         edgeLabelPlacement: EdgeLabelPlacement.shift,
+  //         labelFormat: '{value}k',
+  //         majorTickLines: const MajorTickLines(size: 0)),
+  //     series: _getDefaultSplineSeries(),
+  //     tooltipBehavior: TooltipBehavior(enable: true),
+  //   );
+  // }
+  //
+  // /// Returns the list of chart series which need to render on the spline chart.
+  // List<SplineSeries<ChartSampleData, String>> _getDefaultSplineSeries() {
+  //   return <SplineSeries<ChartSampleData, String>>[
+  //     SplineSeries<ChartSampleData, String>(
+  //       dataSource: chartData,
+  //       xValueMapper: (ChartSampleData sales, _) => sales.x as String,
+  //       yValueMapper: (ChartSampleData sales, _) => sales.y,
+  //       markerSettings: const MarkerSettings(isVisible: true),
+  //       color: kGreenTextColor,
+  //       name: 'Sales',
+  //     ),
+  //     SplineSeries<ChartSampleData, String>(
+  //       dataSource: chartData,
+  //       name: 'Collection',
+  //       markerSettings: const MarkerSettings(isVisible: true),
+  //       color: kRedTextColor,
+  //       xValueMapper: (ChartSampleData sales, _) => sales.x as String,
+  //       yValueMapper: (ChartSampleData sales, _) => sales.secondSeriesYValue,
+  //     )
+  //   ];
+  // }
 
   List<String> status = [
     'This Month',
@@ -422,7 +421,7 @@ class _TablateHomeState extends State<TablateHome> {
                               ],
                             ),
                             const SizedBox(height: 10.0),
-                            _buildDefaultSplineChart()
+                            // _buildDefaultSplineChart()
                           ],
                         ),
                       ).visible(false),

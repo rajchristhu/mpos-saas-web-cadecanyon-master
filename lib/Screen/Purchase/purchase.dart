@@ -1204,12 +1204,15 @@ class _PurchaseState extends State<Purchase> {
 
                                   onSelected: (String selection) {
 
+
                                     if (selection  != '') {
                                       if (product.isEmpty) {
                                         EasyLoading.showError('No Product Found');
                                       }
                                       for (int i = 0; i < product.length; i++) {
-                                        if (product[i].productName.trim().toLowerCase() == selection.trim().toLowerCase() ) {
+
+                                        // print(product[i].productName.trim().toLowerCase());
+                                        if (product[i].productName.trim().removeAllWhiteSpace().toLowerCase() == selection.trim().removeAllWhiteSpace().toLowerCase() ) {
                                           ProductModel cartProduct = product[i];
                                           cartProduct.serialNumber = [];
                                           cartProduct.productStock = '1';

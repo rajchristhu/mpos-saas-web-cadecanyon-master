@@ -23,7 +23,11 @@ import '../PDF/pdfs.dart';
 import '../Widgets/Constant Data/constant.dart';
 
 class ShowPaymentPopUp extends StatefulWidget {
-  const ShowPaymentPopUp({super.key, required this.transitionModel, required this.isFromQuotation});
+  const ShowPaymentPopUp(
+      {super.key,
+      required this.transitionModel,
+      required this.isFromQuotation});
+
   final SaleTransactionModel transitionModel;
   final bool isFromQuotation;
 
@@ -33,18 +37,23 @@ class ShowPaymentPopUp extends StatefulWidget {
 
 class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
   bool isClicked = true;
-  SaleTransactionModel checkLossProfit({required SaleTransactionModel transitionModel}) {
+
+  SaleTransactionModel checkLossProfit(
+      {required SaleTransactionModel transitionModel}) {
     num totalQuantity = 0;
     num lossProfit = 0;
     num totalPurchasePrice = 0;
     num totalSalePrice = 0;
     for (var element in transitionModel.productList!) {
-      totalPurchasePrice = totalPurchasePrice + (element.productPurchasePrice * element.quantity);
-      totalSalePrice = totalSalePrice + (double.parse(element.subTotal) * element.quantity);
+      totalPurchasePrice = totalPurchasePrice +
+          (element.productPurchasePrice * element.quantity);
+      totalSalePrice =
+          totalSalePrice + (double.parse(element.subTotal) * element.quantity);
 
       totalQuantity = totalQuantity + element.quantity;
     }
-    lossProfit = ((totalSalePrice - totalPurchasePrice.toDouble()) - double.parse(transitionModel.discountAmount.toString()));
+    lossProfit = ((totalSalePrice - totalPurchasePrice.toDouble()) -
+        double.parse(transitionModel.discountAmount.toString()));
 
     transitionModel.totalQuantity = totalQuantity;
     transitionModel.lossProfit = lossProfit;
@@ -122,14 +131,20 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
-                                      padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0, bottom: 10.0),
+                                      padding: const EdgeInsets.only(
+                                          left: 30.0,
+                                          right: 30.0,
+                                          top: 10.0,
+                                          bottom: 10.0),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5.0),
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
                                         color: kRedTextColor,
                                       ),
                                       child: Text(
                                         lang.S.of(context).cancel,
-                                        style: kTextStyle.copyWith(color: kWhiteTextColor),
+                                        style: kTextStyle.copyWith(
+                                            color: kWhiteTextColor),
                                       )),
                                 ),
                                 const SizedBox(width: 20),
@@ -139,14 +154,19 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0, bottom: 10.0),
+                                    padding: const EdgeInsets.only(
+                                        left: 30.0,
+                                        right: 30.0,
+                                        top: 10.0,
+                                        bottom: 10.0),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(5.0),
                                       color: kBlueTextColor,
                                     ),
                                     child: Text(
                                       lang.S.of(context).submit,
-                                      style: kTextStyle.copyWith(color: kWhiteTextColor),
+                                      style: kTextStyle.copyWith(
+                                          color: kWhiteTextColor),
                                     ),
                                   ),
                                 ),
@@ -184,18 +204,29 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
       payingAmountController.text = '0';
       double paidAmount = double.parse(payingAmountController.text);
       if (paidAmount > widget.transitionModel.totalAmount!.toDouble()) {
-        changeAmountController.text = (paidAmount - widget.transitionModel.totalAmount!.toDouble()).toString();
+        changeAmountController.text =
+            (paidAmount - widget.transitionModel.totalAmount!.toDouble())
+                .toString();
         dueAmountController.text = '0';
       } else {
-        dueAmountController.text = (widget.transitionModel.totalAmount!.toDouble() - paidAmount).abs().toString();
+        dueAmountController.text =
+            (widget.transitionModel.totalAmount!.toDouble() - paidAmount)
+                .abs()
+                .toString();
         changeAmountController.text = '0';
       }
     });
   }
 
-  void deleteQuotation({required String date, required WidgetRef updateRef}) async {
+  void deleteQuotation(
+      {required String date, required WidgetRef updateRef}) async {
     String key = '';
-    await FirebaseDatabase.instance.ref(await getUserID()).child('Sales Quotation').orderByKey().get().then((value) {
+    await FirebaseDatabase.instance
+        .ref(await getUserID())
+        .child('Sales Quotation')
+        .orderByKey()
+        .get()
+        .then((value) {
       for (var element in value.children) {
         var data = jsonDecode(jsonEncode(element.value));
         if (data['purchaseDate'].toString() == date) {
@@ -203,7 +234,8 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
         }
       }
     });
-    DatabaseReference ref = FirebaseDatabase.instance.ref("${await getUserID()}/Sales Quotation/$key");
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref("${await getUserID()}/Sales Quotation/$key");
     await ref.remove();
     updateRef.refresh(quotationProvider);
   }
@@ -237,18 +269,24 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0),
+                        padding: const EdgeInsets.only(
+                            top: 10.0, left: 10.0, right: 10.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
                               lang.S.of(context).createPayments,
-                              style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold, fontSize: 20.0),
+                              style: kTextStyle.copyWith(
+                                  color: kTitleColor,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20.0),
                             ),
                             const Spacer(),
-                            const Icon(FeatherIcons.x, color: kTitleColor, size: 25.0).onTap(() => {
-                                  finish(context),
-                                })
+                            const Icon(FeatherIcons.x,
+                                    color: kTitleColor, size: 25.0)
+                                .onTap(() => {
+                                      finish(context),
+                                    })
                           ],
                         ),
                       ),
@@ -264,7 +302,10 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                               flex: 4,
                               child: Container(
                                 padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: kWhiteTextColor, border: Border.all(color: kLitGreyColor)),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                    color: kWhiteTextColor,
+                                    border: Border.all(color: kLitGreyColor)),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -274,31 +315,56 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                           width: 200,
                                           child: Text(
                                             lang.S.of(context).payingAmount,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const Spacer(),
                                         SizedBox(
-                                          width: context.width() < 750 ? 170 : context.width() * 0.22,
+                                          width: context.width() < 750
+                                              ? 170
+                                              : context.width() * 0.22,
                                           child: TextFormField(
                                             controller: payingAmountController,
                                             onChanged: (value) {
                                               setState(() {
-                                                double paidAmount = double.parse(value);
-                                                if (paidAmount > widget.transitionModel.totalAmount!.toDouble()) {
-                                                  changeAmountController.text = (paidAmount - widget.transitionModel.totalAmount!.toDouble()).toString();
-                                                  dueAmountController.text = '0';
+                                                double paidAmount =
+                                                    double.parse(value);
+                                                if (paidAmount >
+                                                    widget.transitionModel
+                                                        .totalAmount!
+                                                        .toDouble()) {
+                                                  changeAmountController
+                                                      .text = (paidAmount -
+                                                          widget.transitionModel
+                                                              .totalAmount!
+                                                              .toDouble())
+                                                      .toString();
+                                                  dueAmountController.text =
+                                                      '0';
                                                 } else {
-                                                  dueAmountController.text = (widget.transitionModel.totalAmount!.toDouble() - paidAmount).abs().toString();
-                                                  changeAmountController.text = '0';
+                                                  dueAmountController.text =
+                                                      (widget.transitionModel
+                                                                  .totalAmount!
+                                                                  .toDouble() -
+                                                              paidAmount)
+                                                          .abs()
+                                                          .toString();
+                                                  changeAmountController.text =
+                                                      '0';
                                                 }
                                               });
                                             },
                                             showCursor: true,
                                             cursorColor: kTitleColor,
-                                            decoration: kInputDecoration.copyWith(
-                                              hintText: lang.S.of(context).enterPaidAmonts,
-                                              hintStyle: kTextStyle.copyWith(color: kGreyTextColor),
+                                            decoration:
+                                                kInputDecoration.copyWith(
+                                              hintText: lang.S
+                                                  .of(context)
+                                                  .enterPaidAmonts,
+                                              hintStyle: kTextStyle.copyWith(
+                                                  color: kGreyTextColor),
                                             ),
                                           ),
                                         ),
@@ -311,20 +377,28 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                           width: 200,
                                           child: Text(
                                             lang.S.of(context).changeAmount,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const Spacer(),
                                         SizedBox(
-                                          width: context.width() < 750 ? 170 : context.width() * 0.22,
+                                          width: context.width() < 750
+                                              ? 170
+                                              : context.width() * 0.22,
                                           child: AppTextField(
                                             readOnly: true,
                                             controller: changeAmountController,
                                             cursorColor: kTitleColor,
                                             textFieldType: TextFieldType.NAME,
-                                            decoration: kInputDecoration.copyWith(
-                                              hintText: lang.S.of(context).changeAmount,
-                                              hintStyle: kTextStyle.copyWith(color: kGreyTextColor),
+                                            decoration:
+                                                kInputDecoration.copyWith(
+                                              hintText: lang.S
+                                                  .of(context)
+                                                  .changeAmount,
+                                              hintStyle: kTextStyle.copyWith(
+                                                  color: kGreyTextColor),
                                             ),
                                           ),
                                         ),
@@ -337,20 +411,27 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                           width: 200,
                                           child: Text(
                                             lang.S.of(context).dueAmonunt,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const Spacer(),
                                         SizedBox(
-                                          width: context.width() < 750 ? 170 : context.width() * 0.22,
+                                          width: context.width() < 750
+                                              ? 170
+                                              : context.width() * 0.22,
                                           child: AppTextField(
                                             controller: dueAmountController,
                                             readOnly: true,
                                             cursorColor: kTitleColor,
                                             textFieldType: TextFieldType.NAME,
-                                            decoration: kInputDecoration.copyWith(
-                                              hintText: lang.S.of(context).dueAmonunt,
-                                              hintStyle: kTextStyle.copyWith(color: kGreyTextColor),
+                                            decoration:
+                                                kInputDecoration.copyWith(
+                                              hintText:
+                                                  lang.S.of(context).dueAmonunt,
+                                              hintStyle: kTextStyle.copyWith(
+                                                  color: kGreyTextColor),
                                             ),
                                           ),
                                         ),
@@ -363,23 +444,46 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                           width: 200,
                                           child: Text(
                                             lang.S.of(context).paymentType,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
                                         const Spacer(),
                                         SizedBox(
-                                          width: context.width() < 750 ? 170 : context.width() * 0.22,
+                                          width: context.width() < 750
+                                              ? 170
+                                              : context.width() * 0.22,
                                           child: FormField(
-                                            builder: (FormFieldState<dynamic> field) {
+                                            builder: (FormFieldState<dynamic>
+                                                field) {
                                               return InputDecorator(
-                                                decoration: const InputDecoration(
-                                                    enabledBorder: OutlineInputBorder(
-                                                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
-                                                      borderSide: BorderSide(color: kBorderColorTextField, width: 2),
-                                                    ),
-                                                    contentPadding: EdgeInsets.only(left: 12.0, right: 10.0, top: 7.0, bottom: 7.0),
-                                                    floatingLabelBehavior: FloatingLabelBehavior.never),
-                                                child: DropdownButtonHideUnderline(child: getOption()),
+                                                decoration:
+                                                    const InputDecoration(
+                                                        enabledBorder:
+                                                            OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          8.0)),
+                                                          borderSide: BorderSide(
+                                                              color:
+                                                                  kBorderColorTextField,
+                                                              width: 2),
+                                                        ),
+                                                        contentPadding:
+                                                            EdgeInsets.only(
+                                                                left: 12.0,
+                                                                right: 10.0,
+                                                                top: 7.0,
+                                                                bottom: 7.0),
+                                                        floatingLabelBehavior:
+                                                            FloatingLabelBehavior
+                                                                .never),
+                                                child:
+                                                    DropdownButtonHideUnderline(
+                                                        child: getOption()),
                                               );
                                             },
                                           ),
@@ -391,75 +495,174 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         Container(
-                                            padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0, bottom: 10.0),
+                                            padding: const EdgeInsets.only(
+                                                left: 30.0,
+                                                right: 30.0,
+                                                top: 10.0,
+                                                bottom: 10.0),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(5.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(5.0),
                                               color: kRedTextColor,
                                             ),
                                             child: Text(
                                               lang.S.of(context).cancel,
-                                              style: kTextStyle.copyWith(color: kWhiteTextColor),
+                                              style: kTextStyle.copyWith(
+                                                  color: kWhiteTextColor),
                                             )).onTap(() => {finish(context)}),
                                         const SizedBox(width: 40.0),
-
                                         Container(
-                                          padding: const EdgeInsets.only(left: 30.0, right: 30.0, top: 10.0, bottom: 10.0),
+                                          padding: const EdgeInsets.only(
+                                              left: 30.0,
+                                              right: 30.0,
+                                              top: 10.0,
+                                              bottom: 10.0),
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(5.0),
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
                                             color: kBlueTextColor,
                                           ),
                                           child: Text(
                                             lang.S.of(context).submit,
-                                            style: kTextStyle.copyWith(color: kWhiteTextColor),
+                                            style: kTextStyle.copyWith(
+                                                color: kWhiteTextColor),
                                           ),
                                         ).onTap(
                                           isClicked
                                               ? () async {
-                                                  if (widget.transitionModel.customerType == "sfsffsfsd" && dueAmountController.text.toDouble() > 0) {
-                                                    EasyLoading.showError('Due is not available Foe sfsffsf');
+                                                  if (widget.transitionModel
+                                                              .customerType ==
+                                                          "sfsffsfsd" &&
+                                                      dueAmountController.text
+                                                              .toDouble() >
+                                                          0) {
+                                                    EasyLoading.showError(
+                                                        'Due is not available Foe sfsffsf');
                                                   } else {
                                                     setState(() {
                                                       isClicked = false;
                                                     });
                                                     try {
-                                                      EasyLoading.show(status: 'Loading...', dismissOnTap: false);
+                                                      EasyLoading.show(
+                                                          status: 'Loading...',
+                                                          dismissOnTap: false);
                                                       print(await getUserID());
-                                                      DatabaseReference ref = FirebaseDatabase.instance.ref("${await getUserID()}/Sales Transition");
-                                                      print('---------userid ---$ref--------${FirebaseDatabase.instance.ref("${await getUserID()}/Sales Transition")}----------');
-                                                      DatabaseReference ref1 = FirebaseDatabase.instance.ref("${await getUserID()}/Quotation Convert History");
+                                                      DatabaseReference ref =
+                                                          FirebaseDatabase
+                                                              .instance
+                                                              .ref(
+                                                                  "${await getUserID()}/Sales Transition");
+                                                      print(
+                                                          '---------userid ---$ref--------${FirebaseDatabase.instance.ref("${await getUserID()}/Sales Transition")}----------');
+                                                      DatabaseReference ref1 =
+                                                          FirebaseDatabase
+                                                              .instance
+                                                              .ref(
+                                                                  "${await getUserID()}/Quotation Convert History");
 
-                                                      dueAmountController.text.toDouble() <= 0 ? widget.transitionModel.isPaid = true : widget.transitionModel.isPaid = false;
-                                                      dueAmountController.text.toDouble() <= 0
-                                                          ? widget.transitionModel.dueAmount = 0
-                                                          : widget.transitionModel.dueAmount = double.parse(dueAmountController.text);
-                                                      changeAmountController.text.toDouble() > 0
-                                                          ? widget.transitionModel.returnAmount = changeAmountController.text.toDouble().abs()
-                                                          : widget.transitionModel.returnAmount = 0;
-                                                      widget.transitionModel.totalAmount = widget.transitionModel.totalAmount!.toDouble().toDouble();
-                                                      widget.transitionModel.paymentType = selectedPaymentOption;
-                                                      widget.transitionModel.sellerName = isSubUser ? constSubUserTitle : 'Admin';
+                                                      dueAmountController.text
+                                                                  .toDouble() <=
+                                                              0
+                                                          ? widget
+                                                              .transitionModel
+                                                              .isPaid = true
+                                                          : widget
+                                                              .transitionModel
+                                                              .isPaid = false;
+                                                      dueAmountController.text
+                                                                  .toDouble() <=
+                                                              0
+                                                          ? widget
+                                                              .transitionModel
+                                                              .dueAmount = 0
+                                                          : widget.transitionModel
+                                                                  .dueAmount =
+                                                              double.parse(
+                                                                  dueAmountController
+                                                                      .text);
+                                                      changeAmountController
+                                                                  .text
+                                                                  .toDouble() >
+                                                              0
+                                                          ? widget.transitionModel
+                                                                  .returnAmount =
+                                                              changeAmountController
+                                                                  .text
+                                                                  .toDouble()
+                                                                  .abs()
+                                                          : widget
+                                                              .transitionModel
+                                                              .returnAmount = 0;
+                                                      widget.transitionModel
+                                                              .totalAmount =
+                                                          widget.transitionModel
+                                                              .totalAmount!
+                                                              .toDouble()
+                                                              .toDouble();
+                                                      widget.transitionModel
+                                                              .paymentType =
+                                                          selectedPaymentOption;
+                                                      widget.transitionModel
+                                                              .sellerName =
+                                                          isSubUser
+                                                              ? constSubUserTitle
+                                                              : 'Admin';
 
                                                       ///__________total LossProfit & quantity________________________________________________________________
-                                                      SaleTransactionModel post = checkLossProfit(transitionModel: widget.transitionModel);
+                                                      SaleTransactionModel
+                                                          post =
+                                                          checkLossProfit(
+                                                              transitionModel:
+                                                                  widget
+                                                                      .transitionModel);
 
-                                                      print('-----------$post------------${checkLossProfit(transitionModel: widget.transitionModel)}-----');
+                                                      print(
+                                                          '-----------$post------------${checkLossProfit(transitionModel: widget.transitionModel)}-----');
 
                                                       ///_________Push_on_dataBase____________________________________________________________________________
-                                                      await ref.push().set(post.toJson());
+                                                      await ref
+                                                          .push()
+                                                          .set(post.toJson());
 
                                                       ///_________Push_on_Quotation to Sale history____________________________________________________________________________
-                                                      widget.isFromQuotation ? await ref1.push().set(post.toJson()) : null;
+                                                      widget.isFromQuotation
+                                                          ? await ref1
+                                                              .push()
+                                                              .set(
+                                                                  post.toJson())
+                                                          : null;
 
                                                       ///__________StockMange_________________________________________________________________________________
-                                                      final stockRef = FirebaseDatabase.instance.ref('${await getUserID()}/Products/');
+                                                      final stockRef =
+                                                          FirebaseDatabase
+                                                              .instance
+                                                              .ref(
+                                                                  '${await getUserID()}/Products/');
                                                       print('Stock Mange done');
 
-                                                      for (var element in widget.transitionModel.productList!) {
-                                                        var data = await stockRef.orderByChild('productCode').equalTo(element.productId).once();
-                                                        print('-------product code-------$data---------');
-                                                        final data2 = jsonDecode(jsonEncode(data.snapshot.value));
-                                                        print('----data encode---$data2');
-                                                        String productPath = data.snapshot.value.toString().substring(1, 21);
+                                                      for (var element in widget
+                                                          .transitionModel
+                                                          .productList!) {
+                                                        var data = await stockRef
+                                                            .orderByChild(
+                                                                'productCode')
+                                                            .equalTo(element
+                                                                .productId)
+                                                            .once();
+                                                        print(
+                                                            '-------product code-------$data---------');
+                                                        final data2 =
+                                                            jsonDecode(
+                                                                jsonEncode(data
+                                                                    .snapshot
+                                                                    .value));
+                                                        print(
+                                                            '----data encode---$data2');
+                                                        String productPath =
+                                                            data.snapshot.value
+                                                                .toString()
+                                                                .substring(
+                                                                    1, 21);
 
                                                         try {
                                                           print('loegn');
@@ -514,20 +717,30 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                                           //   }
                                                           // }
 
-                                                          print('All product stocks updated successfully');
-                                                          await GeneratePdfAndPrint().generatePdf( saleTransactionModel: widget.transitionModel,context:context);
+                                                          print(
+                                                              'All product stocks updated successfully');
+                                                          await GeneratePdfAndPrint().generatePdf(
+                                                              saleTransactionModel:
+                                                                  widget
+                                                                      .transitionModel,
+                                                              context: context,
+                                                              pay: payingAmountController
+                                                                  .text
+                                                                  .toString(),change: changeAmountController
+                                                                  .text
+                                                                  .toString());
 
                                                           // Navigator.of(context).pushNamed(MtHomeScreen.route);
-
                                                         } catch (e) {
-                                                          print('loegdfdfdfdfdfn');
+                                                          print(
+                                                              'loegdfdfdfdfdfn');
 
                                                           EasyLoading.dismiss();
 
-                                                          print('Error updating stock: $e');
+                                                          print(
+                                                              'Error updating stock: $e');
                                                           // Handle overall stock update error
                                                         }
-
 
                                                         // print('------product path---$productPath-----');
                                                         // var data1 = await stockRef.child('$productPath/productStock').once();
@@ -537,30 +750,60 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                                         // print('---------remain-------$remainStock-----');
                                                         // stockRef.child(productPath).update({'productStock': '$remainStock'});
 
-
                                                         ///________Update_Serial_Number____________________________________________________
 
+                                                        if (element
+                                                            .serialNumber!
+                                                            .isNotEmpty) {
+                                                          var productOldSerialList =
+                                                              data2[productPath]
+                                                                  [
+                                                                  'serialNumber'];
 
-                                                        if (element.serialNumber!.isNotEmpty) {
-                                                          var productOldSerialList = data2[productPath]['serialNumber'];
-
-                                                          List<dynamic> result = productOldSerialList.where((item) => !element.serialNumber!.contains(item)).toList();
-                                                          stockRef.child(productPath).update({
-                                                            'serialNumber': result.map((e) => e).toList(),
+                                                          List<dynamic> result =
+                                                              productOldSerialList
+                                                                  .where((item) => !element
+                                                                      .serialNumber!
+                                                                      .contains(
+                                                                          item))
+                                                                  .toList();
+                                                          stockRef
+                                                              .child(
+                                                                  productPath)
+                                                              .update({
+                                                            'serialNumber':
+                                                                result
+                                                                    .map((e) =>
+                                                                        e)
+                                                                    .toList(),
                                                           });
                                                         }
                                                       }
-                                                      print('for loop product list done');
+                                                      print(
+                                                          'for loop product list done');
                                                       // print('for loop product list done');
 
                                                       ///_________Invoice Increase____________________________________________________________________________
                                                       widget.isFromQuotation
                                                           ? null
-                                                          : updateInvoice(typeOfInvoice: 'saleInvoiceCounter', invoice: widget.transitionModel.invoiceNumber.toInt());
+                                                          : updateInvoice(
+                                                              typeOfInvoice:
+                                                                  'saleInvoiceCounter',
+                                                              invoice: widget
+                                                                  .transitionModel
+                                                                  .invoiceNumber
+                                                                  .toInt());
 
                                                       ///_________delete_quotation___________________________________________________________________________________
 
-                                                      widget.isFromQuotation ? deleteQuotation(date: widget.transitionModel.purchaseDate, updateRef: consumerRef) : null;
+                                                      widget.isFromQuotation
+                                                          ? deleteQuotation(
+                                                              date: widget
+                                                                  .transitionModel
+                                                                  .purchaseDate,
+                                                              updateRef:
+                                                                  consumerRef)
+                                                          : null;
 
                                                       ///________Subscription______________________________________________________________________________
 
@@ -568,69 +811,140 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
 
                                                       ///________daily_transactionModel_________________________________________________________________________
 
-                                                      DailyTransactionModel dailyTransaction = DailyTransactionModel(
+                                                      DailyTransactionModel
+                                                          dailyTransaction =
+                                                          DailyTransactionModel(
                                                         name: post.customerName,
                                                         date: post.purchaseDate,
                                                         type: 'Sale',
-                                                        total: post.totalAmount!.toDouble(),
-                                                        paymentIn: post.totalAmount!.toDouble() - post.dueAmount!.toDouble(),
+                                                        total: post.totalAmount!
+                                                            .toDouble(),
+                                                        paymentIn: post
+                                                                .totalAmount!
+                                                                .toDouble() -
+                                                            post.dueAmount!
+                                                                .toDouble(),
                                                         paymentOut: 0,
-                                                        remainingBalance: post.totalAmount!.toDouble() - post.dueAmount!.toDouble(),
+                                                        remainingBalance: post
+                                                                .totalAmount!
+                                                                .toDouble() -
+                                                            post.dueAmount!
+                                                                .toDouble(),
                                                         id: post.invoiceNumber,
-                                                        saleTransactionModel: post,
+                                                        saleTransactionModel:
+                                                            post,
                                                       );
-                                                      postDailyTransaction(dailyTransactionModel: dailyTransaction);
+                                                      postDailyTransaction(
+                                                          dailyTransactionModel:
+                                                              dailyTransaction);
 
                                                       ///_________DueUpdate___________________________________________________________________________________
-                                                      if (widget.transitionModel.customerName != 'sfsffsf') {
-                                                        final dueUpdateRef = FirebaseDatabase.instance.ref('${await getUserID()}/Customers/');
+                                                      if (widget.transitionModel
+                                                              .customerName !=
+                                                          'sfsffsf') {
+                                                        final dueUpdateRef =
+                                                            FirebaseDatabase
+                                                                .instance
+                                                                .ref(
+                                                                    '${await getUserID()}/Customers/');
                                                         String? key;
 
-                                                        await FirebaseDatabase.instance.ref(await getUserID()).child('Customers').orderByKey().get().then((value) {
-                                                          for (var element in value.children) {
-                                                            var data = jsonDecode(jsonEncode(element.value));
-                                                            if (data['phoneNumber'] == widget.transitionModel.customerPhone) {
+                                                        await FirebaseDatabase
+                                                            .instance
+                                                            .ref(
+                                                                await getUserID())
+                                                            .child('Customers')
+                                                            .orderByKey()
+                                                            .get()
+                                                            .then((value) {
+                                                          for (var element
+                                                              in value
+                                                                  .children) {
+                                                            var data = jsonDecode(
+                                                                jsonEncode(
+                                                                    element
+                                                                        .value));
+                                                            if (data[
+                                                                    'phoneNumber'] ==
+                                                                widget
+                                                                    .transitionModel
+                                                                    .customerPhone) {
                                                               key = element.key;
                                                             }
                                                           }
                                                         });
-                                                        var data1 = await dueUpdateRef.child('$key/due').once();
-                                                        int previousDue = data1.snapshot.value.toString().toInt();
+                                                        var data1 =
+                                                            await dueUpdateRef
+                                                                .child(
+                                                                    '$key/due')
+                                                                .once();
+                                                        int previousDue = data1
+                                                            .snapshot.value
+                                                            .toString()
+                                                            .toInt();
 
-                                                        int totalDue = previousDue + widget.transitionModel.dueAmount!.toInt();
-                                                        dueUpdateRef.child(key!).update({'due': '$totalDue'});
+                                                        int totalDue = previousDue +
+                                                            widget
+                                                                .transitionModel
+                                                                .dueAmount!
+                                                                .toInt();
+                                                        dueUpdateRef
+                                                            .child(key!)
+                                                            .update({
+                                                          'due': '$totalDue'
+                                                        });
                                                       }
 
                                                       ///________update_all_provider___________________________________________________
 
-                                                      consumerRef.refresh(allCustomerProvider);
-                                                      consumerRef.refresh(transitionProvider);
-                                                      consumerRef.refresh(productProvider);
-                                                      consumerRef.refresh(purchaseTransitionProvider);
-                                                      consumerRef.refresh(dueTransactionProvider);
-                                                      consumerRef.refresh(profileDetailsProvider);
-                                                      consumerRef.refresh(dailyTransactionProvider);
+                                                      consumerRef.refresh(
+                                                          allCustomerProvider);
+                                                      consumerRef.refresh(
+                                                          transitionProvider);
+                                                      consumerRef.refresh(
+                                                          productProvider);
+                                                      consumerRef.refresh(
+                                                          purchaseTransitionProvider);
+                                                      consumerRef.refresh(
+                                                          dueTransactionProvider);
+                                                      consumerRef.refresh(
+                                                          profileDetailsProvider);
+                                                      consumerRef.refresh(
+                                                          dailyTransactionProvider);
 
                                                       // Future.delayed(Duration.zero, () => setState(() {}));
-                                                      EasyLoading.showSuccess('Added Successfully');
-                                                      await GeneratePdfAndPrint().printSaleInvoice(
-                                                          personalInformationModel: data,
-                                                          saleTransactionModel: widget.transitionModel,
-                                                          context: widget.isFromQuotation ? null : context);
+                                                      EasyLoading.showSuccess(
+                                                          'Added Successfully');
+                                                      await GeneratePdfAndPrint()
+                                                          .printSaleInvoice(
+                                                              personalInformationModel:
+                                                                  data,
+                                                              saleTransactionModel:
+                                                                  widget
+                                                                      .transitionModel,
+                                                              context: widget
+                                                                      .isFromQuotation
+                                                                  ? null
+                                                                  : context);
 
-                                                      widget.isFromQuotation ? Navigator.pop(context) : null;
+                                                      widget.isFromQuotation
+                                                          ? Navigator.pop(
+                                                              context)
+                                                          : null;
                                                       EasyLoading.dismiss();
                                                       // Navigator.pop(context);
-
                                                     } catch (e) {
                                                       EasyLoading.dismiss();
-                                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(SnackBar(
+                                                              content: Text(e
+                                                                  .toString())));
                                                     }
                                                   }
                                                 }
                                               : () {},
                                         ),
-
                                       ],
                                     ),
                                   ],
@@ -653,20 +967,27 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                     Container(
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(topLeft: radiusCircular(5.0), topRight: radiusCircular(5.0)),
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: radiusCircular(5.0),
+                                            topRight: radiusCircular(5.0)),
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).totalProduct,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '${widget.transitionModel.productList?.length}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -677,18 +998,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).totalAmount,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency ${getTotalAmount()}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -699,18 +1025,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).csgst,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency${widget.transitionModel.cgst}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -721,18 +1052,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).sgst,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency${widget.transitionModel.sgst}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -743,18 +1079,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             'VAT',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency${widget.transitionModel.igst}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -765,18 +1106,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).serviceorshiping,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency${widget.transitionModel.serviceCharge}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -787,18 +1133,23 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
                                         color: kWhiteTextColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).discount,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency${widget.transitionModel.discountAmount}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),
@@ -808,20 +1159,27 @@ class _ShowPaymentPopUpState extends State<ShowPaymentPopUp> {
                                     Container(
                                       padding: const EdgeInsets.all(10.0),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(bottomLeft: radiusCircular(5.0), bottomRight: radiusCircular(5.0)),
+                                        borderRadius: BorderRadius.only(
+                                            bottomLeft: radiusCircular(5.0),
+                                            bottomRight: radiusCircular(5.0)),
                                         color: kLitGreyColor,
-                                        border: Border.all(color: kLitGreyColor),
+                                        border:
+                                            Border.all(color: kLitGreyColor),
                                       ),
                                       child: Row(
                                         children: [
                                           Text(
                                             lang.S.of(context).grandTotal,
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           const Spacer(),
                                           Text(
                                             '$currency ${widget.transitionModel.totalAmount}',
-                                            style: kTextStyle.copyWith(color: kTitleColor, fontWeight: FontWeight.bold),
+                                            style: kTextStyle.copyWith(
+                                                color: kTitleColor,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ],
                                       ),

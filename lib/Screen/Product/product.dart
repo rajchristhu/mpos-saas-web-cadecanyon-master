@@ -770,6 +770,9 @@ class _ProductState extends State<Product> {
                                                                                             ),
                                                                                             Text("RS :${product[index].productSalePrice}", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
                                                                                             const SizedBox(height: 15),
+                                                                                        Row(
+                                                                                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                                          children: [
                                                                                             GestureDetector(
                                                                                               child: Container(
                                                                                                 width: 130,
@@ -781,10 +784,13 @@ class _ProductState extends State<Product> {
                                                                                                   ),
                                                                                                 ),
                                                                                                 child: const Center(
-                                                                                                  child: Text(
+                                                                                                  child:
+
+                                                                                                  Text(
                                                                                                     "Print",
                                                                                                     style: TextStyle(color: Colors.white),
                                                                                                   ),
+
                                                                                                 ),
                                                                                               ),
                                                                                               onTap: () async {
@@ -798,6 +804,36 @@ class _ProductState extends State<Product> {
                                                                                                 // Navigator.pop(bc);
                                                                                               },
                                                                                             ),
+                                                                                            const SizedBox(width: 15),
+
+                                                                                            GestureDetector(
+                                                                                              child: Container(
+                                                                                                width: 130,
+                                                                                                height: 50,
+                                                                                                decoration: const BoxDecoration(
+                                                                                                  color: Colors.green,
+                                                                                                  borderRadius: BorderRadius.all(
+                                                                                                    Radius.circular(15),
+                                                                                                  ),
+                                                                                                ),
+                                                                                                child: const Center(
+                                                                                                  child:
+
+                                                                                                  Text(
+                                                                                                    "Close",
+                                                                                                    style: TextStyle(color: Colors.white),
+                                                                                                  ),
+
+                                                                                                ),
+                                                                                              ),
+                                                                                              onTap: () async {
+
+                                                                                                Navigator.pop(dialogContext);
+                                                                                                // Navigator.pop(bc);
+                                                                                              },
+                                                                                            ),
+
+                                                                                          ])
                                                                                           ],
                                                                                         ),
                                                                                       ),
